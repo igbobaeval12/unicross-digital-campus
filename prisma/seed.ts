@@ -11,7 +11,7 @@ async function main() {
     update: { passwordHash, firstName: "Demo", lastName: "Student", role: UserRole.STUDENT, isActive: true },
     create: { email: "student@demo.unicross.edu.ng", firstName: "Demo", lastName: "Student", role: UserRole.STUDENT, passwordHash },
   });
-  await prisma.user.upsert({
+  const lecturerUser = await prisma.user.upsert({
     where: { email: "lecturer@demo.unicross.edu.ng" },
     update: { passwordHash, firstName: "Demo", lastName: "Lecturer", role: UserRole.LECTURER, isActive: true },
     create: { email: "lecturer@demo.unicross.edu.ng", firstName: "Demo", lastName: "Lecturer", role: UserRole.LECTURER, passwordHash },
@@ -48,6 +48,12 @@ async function main() {
     create: { name: SemesterName.FIRST, sessionId: session.id },
   });
 
+  const lecturerStaff = await prisma.staff.upsert({
+    where: { userId: lecturerUser.id },
+    update: { facultyId: faculty.id, departmentId: department.id, title: "Lecturer", staffNumber: "STAFF/CSC/001" },
+    create: { userId: lecturerUser.id, facultyId: faculty.id, departmentId: department.id, title: "Lecturer", staffNumber: "STAFF/CSC/001" },
+  });
+
   const student = await prisma.student.upsert({
     where: { userId: studentUser.id },
     update: { programmeId: programme.id, departmentId: department.id, entrySessionId: session.id, level: 300, gender: Gender.MALE, matricNumber: "UNICROSS/CSC/23/001" },
@@ -71,8 +77,8 @@ async function main() {
     });
     await prisma.courseOffering.upsert({
       where: { courseId_semesterId: { courseId: course.id, semesterId: semester.id } },
-      update: { sessionId: session.id },
-      create: { courseId: course.id, sessionId: session.id, semesterId: semester.id },
+      update: { sessionId: session.id, lecturerId: lecturerStaff.id },
+      create: { courseId: course.id, sessionId: session.id, semesterId: semester.id, lecturerId: lecturerStaff.id },
     });
   }
 
