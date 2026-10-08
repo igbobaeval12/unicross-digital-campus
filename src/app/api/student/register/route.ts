@@ -1,55 +1,88 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
+import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-async function getStudentId() {
-  const token = (await cookies()).get("unicross_session")?.value;
-  const secret = process.env.AUTH_SECRET;
-  if (!token || !secret) return null;
-  try {
-    const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
-    const userId = String(payload.sub || "");
-    const student = await prisma.student.findUnique({ where: { userId }, select: { id: true } });
-    return student?.id ?? null;
-  } catch {
-    return null;
-  }
-}
-
 export async function POST(request: Request) {
-  const studentId = await getStudentId();
-  if (!studentId) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  const user = await getSessionUser();
+
+  if (!user || user.role !== "STUDENT") {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
 
   try {
+    const student = await prisma.student.findUnique({
+      where: { userId: user.id },
+      select: { id: true, level: true },
+    });
+
+    if (!student) {
+      return NextResponse.json({ error: "Student profile not found." }, { status: 404 });
+    }
+
     const { offeringId } = await request.json();
+
     if (!offeringId || typeof offeringId !== "string") {
-      return NextResponse.json({ error: "A course offering is required." }, { status: 400 });
+      return NextResponse.json(
+        { error: "A course offering is required." },
+        { status: 400 }
+      );
     }
 
     const offering = await prisma.courseOffering.findUnique({
       where: { id: offeringId },
       include: { course: true, session: true, semester: true },
     });
-    if (!offering) return NextResponse.json({ error: "Course offering not found." }, { status: 404 });
+
+    if (!offering) {
+      return NextResponse.json(
+        { error: "Course offering not found." },
+        { status: 404 }
+      );
+    }
+
+    if (!offering.session.isCurrent || offering.semester.sessionId !== offering.sessionId) {
+      return NextResponse.json(
+        { error: "This course is not available for the current registration session." },
+        { status: 409 }
+      );
+    }
+
+    if (offering.course.level !== student.level) {
+      return NextResponse.json(
+        { error: "This course is not available for your current level." },
+        { status: 409 }
+      );
+    }
 
     const existing = await prisma.enrollment.findUnique({
-      where: { studentId_offeringId: { studentId, offeringId } },
+      where: { studentId_offeringId: { studentId: student.id, offeringId } },
     });
-    if (existing) return NextResponse.json({ ok: true, message: "Course already registered." });
+
+    if (existing) {
+      return NextResponse.json({
+        ok: true,
+        message: "Course already registered.",
+      });
+    }
 
     await prisma.enrollment.create({
       data: {
-        studentId,
+        studentId: student.id,
         offeringId,
         semesterId: offering.semesterId,
         status: "ACTIVE",
       },
     });
 
-    return NextResponse.json({ ok: true, message: `${offering.course.code} registered successfully.` });
+    return NextResponse.json({
+      ok: true,
+      message: `${offering.course.code} registered successfully.`,
+    });
   } catch (error) {
     console.error("Course registration failed:", error);
-    return NextResponse.json({ error: "Unable to register this course." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Unable to register this course." },
+      { status: 500 }
+    );
   }
 }

@@ -3,12 +3,16 @@ import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 import { prisma } from "@/lib/prisma";
 
-const secret = new TextEncoder().encode(
-  process.env.AUTH_SECRET || "change-this-demo-secret"
-);
-
 export async function POST(request: Request) {
   try {
+    const secretValue = process.env.AUTH_SECRET;
+    if (!secretValue) {
+      return NextResponse.json(
+        { error: "Authentication is not configured." },
+        { status: 503 }
+      );
+    }
+
     const { email, password } = await request.json();
 
     if (!email || !password) {
@@ -33,6 +37,7 @@ export async function POST(request: Request) {
       );
     }
 
+    const secret = new TextEncoder().encode(secretValue);
     const token = await new SignJWT({
       role: user.role,
       name: [user.firstName, user.lastName].join(" "),
