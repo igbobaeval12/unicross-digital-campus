@@ -12,7 +12,7 @@ export default function Home() {
     <main>
       <nav className="nav">
         <div className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></div>
-        <div className="navLinks"><a href="#modules">Modules</a><a href="#about">About</a><button>Sign in</button></div>
+        <div className="navLinks"><a href="#modules">Modules</a><a href="#about">About</a><a className="signInButton" href="/login">Sign in</a></div>
       </nav>
 
       <section className="hero">
