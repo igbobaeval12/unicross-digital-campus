@@ -84,6 +84,7 @@ model User {
   announcements  Announcement[] @relation("AnnouncementAuthor")
   auditLogs      AuditLog[]
   payments       Payment[]    @relation("PaymentUser")
+  materialsUploaded CourseMaterial[] @relation("MaterialUploader")
 }
 
 model Campus {
@@ -98,7 +99,7 @@ model Campus {
 
 model Faculty {
   id          String       @id @default(cuid())
-  name        String
+  name        String       @unique
   code        String       @unique
   campusId    String?
   campus      Campus?      @relation(fields: [campusId], references: [id])
@@ -139,7 +140,7 @@ model Programme {
 
 model AcademicSession {
   id          String      @id @default(cuid())
-  name        String      @unique
+  name        String       @unique
   startDate   DateTime
   endDate     DateTime
   isCurrent   Boolean     @default(false)
@@ -174,6 +175,7 @@ model Course {
   departmentId   String
   department     Department   @relation(fields: [departmentId], references: [id])
   offerings      CourseOffering[]
+  materials      CourseMaterial[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }
@@ -269,13 +271,13 @@ model FeeStructure {
   programmeId String?
   session     AcademicSession @relation(fields: [sessionId], references: [id])
   payments    Payment[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
 }
 
 model Payment {
   id             String        @id @default(cuid())
-  reference      String        @unique
+  reference      String        @id @default(cuid())
   studentId      String
   userId         String
   feeStructureId String
@@ -286,7 +288,7 @@ model Payment {
   user           User          @relation("PaymentUser", fields: [userId], references: [id])
   feeStructure   FeeStructure  @relation(fields: [feeStructureId], references: [id])
   createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  updatedAt      DateTime      @default(now())
 }
 
 model AdmissionApplication {
@@ -300,8 +302,8 @@ model AdmissionApplication {
   applicant     User            @relation(fields: [applicantId], references: [id])
   programme     Programme       @relation(fields: [programmeId], references: [id])
   session       AcademicSession @relation(fields: [sessionId], references: [id])
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model Announcement {
@@ -314,6 +316,20 @@ model Announcement {
   author      User     @relation("AnnouncementAuthor", fields: [authorId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model CourseMaterial {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  url         String
+  courseId    String
+  uploadedBy  String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  course      Course         @relation(fields: [courseId], references: [id])
+  uploader    User           @relation("MaterialUploader", fields: [uploadedBy], references: [id])
+  @@index([courseId, createdAt])
 }
 
 model AuditLog {
@@ -329,7 +345,6 @@ model AuditLog {
   @@index([entity, entityId])
   @@index([userId, createdAt])
 }
-
 
 model Attendance {
   id         String           @id @default(cuid())
