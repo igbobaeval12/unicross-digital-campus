@@ -67,7 +67,12 @@ export default async function Dashboard() {
           {student.enrollments.map((e) => <div className="courseRow" key={e.id}><b>{e.offering.course.code}</b><span>{e.offering.course.title}</span><em>{e.offering.course.unit} units</em></div>)}
           {!student.enrollments.length && <p>No courses registered yet.</p>}
         </article>
-        <article className="portalCard"><h3>Academic summary</h3><div className="summaryLine"><span>Published results</span><b>{publishedResults.length}</b></div><div className="summaryLine"><span>Total units</span><b>{totalUnits}</b></div><div className="summaryLine"><span>CGPA</span><b>{gpa}</b></div></article>
+        <article className="portalCard">
+          <div className="portalCardHead"><h3>Academic summary</h3><Link className="secondary smallAction" href="/results">View results</Link></div>
+          <div className="summaryLine"><span>Published results</span><b>{publishedResults.length}</b></div>
+          <div className="summaryLine"><span>Total units</span><b>{totalUnits}</b></div>
+          <div className="summaryLine"><span>CGPA</span><b>{gpa}</b></div>
+        </article>
         <article className="portalCard"><h3>Latest payment</h3>{student.payments[0] ? <><div className="paymentAmount">₦{Number(student.payments[0].amount).toLocaleString()}</div><p>{student.payments[0].status} · {student.payments[0].reference}</p></> : <p>No payment records.</p>}</article>
       </section>
     </main>
