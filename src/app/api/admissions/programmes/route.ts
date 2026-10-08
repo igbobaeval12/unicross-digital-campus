@@ -1,0 +1,1 @@
+import{NextResponse}from"next/server";import{prisma}from"@/lib/prisma";export async function GET(){return NextResponse.json(await prisma.programme.findMany({select:{id:true,name:true,award:true},orderBy:{name:"asc"}}))}
