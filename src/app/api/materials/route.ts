@@ -7,7 +7,11 @@ export async function GET() {
   const student = await prisma.student.findUnique({ where: { userId: user.id }, select: { id: true } });
   const staff = await prisma.staff.findUnique({ where: { userId: user.id }, select: { id: true } });
   if (!student && !staff) return NextResponse.json({ materials: [] });
+  const courseIds = student
+    ? (await prisma.enrollment.findMany({ where: { studentId: student.id, status: "ACTIVE" }, select: { offering: { select: { courseId: true } } } })).map((e) => e.offering.courseId)
+    : (await prisma.courseOffering.findMany({ where: { lecturerId: staff!.id }, select: { courseId: true } })).map((o) => o.courseId);
   const materials = await prisma.courseMaterial.findMany({
+    where: { courseId: { in: [...new Set(courseIds)] } },
     include: { course: { select: { code: true, title: true } }, uploader: { select: { firstName: true, lastName: true } } },
     orderBy: { createdAt: "desc" }, take: 100,
   });
@@ -25,7 +29,7 @@ export async function POST(request: Request) {
   try { new URL(url); } catch { return NextResponse.json({ error: "Enter a valid material URL." }, { status: 400 }); }
   const staff = await prisma.staff.findUnique({ where: { userId: user.id }, select: { id: true } });
   if (!staff) return NextResponse.json({ error: "Lecturer profile not found." }, { status: 403 });
-  const assignment = await prisma.courseOffering.findFirst({ where: { lecturerId: staff.id, courseId } });
+  const assignment = await prisma.courseOffering.findFirst({ where: { lecturerId: staff.id, courseId });
   if (!assignment) return NextResponse.json({ error: "You can only publish materials for your assigned courses." }, { status: 403 });
   const material = await prisma.courseMaterial.create({ data: { title, description: description || null, url, courseId, uploadedBy: user.id } });
   return NextResponse.json({ material }, { status: 201 });
