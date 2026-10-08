@@ -58,6 +58,13 @@ enum AdmissionStatus {
   REJECTED
 }
 
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
 model User {
   id             String       @id @default(cuid())
   email          String       @unique
@@ -153,6 +160,7 @@ model Semester {
   offerings   CourseOffering[]
   enrollments Enrollment[]
   results     Result[]
+  attendance  Attendance[]
   @@unique([name, sessionId])
 }
 
@@ -202,6 +210,7 @@ model Student {
   entrySession    AcademicSession @relation(fields: [entrySessionId], references: [id])
   enrollments     Enrollment[]
   results         Result[]
+  attendance      Attendance[]
   payments        Payment[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -318,4 +327,19 @@ model AuditLog {
   user       User?    @relation(fields: [userId], references: [id])
   @@index([entity, entityId])
   @@index([userId, createdAt])
+}
+
+
+model Attendance {
+  id         String           @id @default(cuid())
+  studentId  String
+  offeringId String
+  date       DateTime         @db.Date
+  status     AttendanceStatus @default(PRESENT)
+  student    Student          @relation(fields: [studentId], references: [id])
+  offering   CourseOffering   @relation(fields: [offeringId], references: [id])
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  @@unique([studentId, offeringId, date])
+  @@index([offeringId, date])
 }
