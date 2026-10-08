@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
 export default async function Dashboard() {
@@ -41,8 +42,8 @@ export default async function Dashboard() {
   return (
     <main className="portalPage">
       <nav className="portalNav">
-        <a href="/" className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></a>
-        <div className="portalNavRight"><span className="roleBadge">STUDENT</span><a className="portalLogout" href="/api/auth/logout">Sign out</a></div>
+        <Link href="/" className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></Link>
+        <div className="portalNavRight"><span className="roleBadge">STUDENT</span><Link className="portalLogout" href="/api/auth/logout">Sign out</Link></div>
       </nav>
 
       <section className="portalHero">
@@ -61,8 +62,10 @@ export default async function Dashboard() {
       </section>
 
       <section className="portalGrid">
-        <article className="portalCard portalWide"><div className="portalCardHead"><h3>Current courses</h3><span>{student.enrollments.length} courses</span></div>
+        <article className="portalCard portalWide">
+          <div className="portalCardHead"><h3>Current courses</h3><Link className="secondary smallAction" href="/register">Manage registration</Link></div>
           {student.enrollments.map((e) => <div className="courseRow" key={e.id}><b>{e.offering.course.code}</b><span>{e.offering.course.title}</span><em>{e.offering.course.unit} units</em></div>)}
+          {!student.enrollments.length && <p>No courses registered yet.</p>}
         </article>
         <article className="portalCard"><h3>Academic summary</h3><div className="summaryLine"><span>Published results</span><b>{publishedResults.length}</b></div><div className="summaryLine"><span>Total units</span><b>{totalUnits}</b></div><div className="summaryLine"><span>CGPA</span><b>{gpa}</b></div></article>
         <article className="portalCard"><h3>Latest payment</h3>{student.payments[0] ? <><div className="paymentAmount">₦{Number(student.payments[0].amount).toLocaleString()}</div><p>{student.payments[0].status} · {student.payments[0].reference}</p></> : <p>No payment records.</p>}</article>
