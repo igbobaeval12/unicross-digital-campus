@@ -84,6 +84,7 @@ model User {
   announcements  Announcement[] @relation("AnnouncementAuthor")
   auditLogs      AuditLog[]
   payments       Payment[]    @relation("PaymentUser")
+  materialsUploaded CourseMaterial[] @relation("MaterialUploader")
 }
 
 model Campus {
@@ -174,6 +175,7 @@ model Course {
   departmentId   String
   department     Department   @relation(fields: [departmentId], references: [id])
   offerings      CourseOffering[]
+  materials      CourseMaterial[]
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 }
@@ -313,6 +315,21 @@ model Announcement {
   author      User     @relation("AnnouncementAuthor", fields: [authorId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+
+model CourseMaterial {
+  id          String         @id @default(cuid())
+  title       String
+  description String?
+  url         String
+  courseId    String
+  uploadedBy  String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  course      Course         @relation(fields: [courseId], references: [id])
+  uploader    User           @relation("MaterialUploader", fields: [uploadedBy], references: [id])
+  @@index([courseId, createdAt])
 }
 
 model AuditLog {
