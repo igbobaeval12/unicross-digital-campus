@@ -12,7 +12,7 @@ export default function Home() {
     <main>
       <nav className="nav">
         <div className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></div>
-        <div className="navLinks"><a href="#modules">Modules</a><a href="#about">About</a><a className="signInButton" href="/login">Sign in</a></div>
+        <div className="navLinks"><a href="#modules">Modules</a><a href="#about">About</a><a className="signInButton" href="/login" aria-label="Sign in">Sign in</a></div>
       </nav>
 
       <section className="hero">
@@ -25,7 +25,7 @@ export default function Home() {
         <div className="dashboardPreview" aria-label="Dashboard preview">
           <div className="previewTop"><b>Digital Campus</b><span>● System online</span></div>
           <div className="stats"><div><small>Students</small><strong>24,860</strong><em>+8.4%</em></div><div><small>Registrations</small><strong>18,420</strong><em>+12.1%</em></div><div><small>Fee collections</small><strong>₦428M</strong><em>+6.8%</em></div></div>
-          <div className="previewBody"><div className="chart"><div className="chartTitle">Academic activity</div><div className="bars">{[42,68,51,82,64,91,74].map((h,i)=><i key={i} style={{height:`${h}%`}} />)}</div></div><div className="activity"><b>Recent activity</b><p>✓ Results submitted</p><p>✓ Course registration opened</p><p>✓ New announcement published</p></div></div>
+          <div className="previewBody"><div className="chart"><div className="chartTitle">Academic activity</div><div className="bars">{[42,68,51,82,64,91,74].map((h,i)=><i key={i} style={{height:h + "%"}} />)}</div></div><div className="activity"><b>Recent activity</b><p>✓ Results submitted</p><p>✓ Course registration opened</p><p>✓ New announcement published</p></div></div>
         </div>
       </section>
 
