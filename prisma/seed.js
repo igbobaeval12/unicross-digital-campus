@@ -28,12 +28,17 @@ async function main() {
   await prisma.academicSession.updateMany({ where: { id: { not: session.id } }, data: { isCurrent: false } });
   const semester = await prisma.semester.upsert({ where: { name_sessionId: { name: SemesterName.FIRST, sessionId: session.id } }, update: {}, create: { name: SemesterName.FIRST, sessionId: session.id } });
   const student = await prisma.student.upsert({ where: { userId: studentUser.id }, update: { programmeId: programme.id, departmentId: department.id, entrySessionId: session.id, level: 300, gender: Gender.MALE, matricNumber: "UNICROSS/CSC/23/001" }, create: { userId: studentUser.id, programmeId: programme.id, departmentId: department.id, entrySessionId: session.id, level: 300, gender: Gender.MALE, matricNumber: "UNICROSS/CSC/23/001" } });
+
+  // The demo student starts with no course registrations.
+  // This lets the Course Registration module demonstrate the real registration workflow.
+  await prisma.enrollment.deleteMany({ where: { studentId: student.id } });
+
   const courseData = [["CSC 301","Data Structures",3],["CSC 303","Database Systems",3],["CSC 305","Operating Systems",3],["CSC 307","Software Engineering",3],["CSC 309","Computer Networks",2]];
   for (const [code,title,unit] of courseData) {
     const course = await prisma.course.upsert({ where: { code }, update: { title, unit, level: 300, departmentId: department.id }, create: { code, title, unit, level: 300, departmentId: department.id } });
-    const offering = await prisma.courseOffering.upsert({ where: { courseId_semesterId: { courseId: course.id, semesterId: semester.id } }, update: { sessionId: session.id }, create: { courseId: course.id, sessionId: session.id, semesterId: semester.id } });
-    await prisma.enrollment.upsert({ where: { studentId_offeringId: { studentId: student.id, offeringId: offering.id } }, update: { semesterId: semester.id }, create: { studentId: student.id, offeringId: offering.id, semesterId: semester.id } });
+    await prisma.courseOffering.upsert({ where: { courseId_semesterId: { courseId: course.id, semesterId: semester.id } }, update: { sessionId: session.id }, create: { courseId: course.id, sessionId: session.id, semesterId: semester.id } });
   }
+
   const grades = [["CSC 301",24,62,86,"A",4],["CSC 303",22,57,79,"B",3],["CSC 305",21,55,76,"B",3],["CSC 307",25,60,85,"A",4],["CSC 309",18,53,71,"B",3]];
   for (const [code,caScore,examScore,totalScore,grade,gradePoint] of grades) {
     const course = await prisma.course.findUniqueOrThrow({ where: { code } });
