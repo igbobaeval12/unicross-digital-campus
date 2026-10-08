@@ -277,7 +277,7 @@ model FeeStructure {
 
 model Payment {
   id             String        @id @default(cuid())
-  reference      String        @id @default(cuid())
+  reference      String        @unique
   studentId      String
   userId         String
   feeStructureId String
