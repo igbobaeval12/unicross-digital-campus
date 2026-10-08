@@ -18,13 +18,46 @@ enum UserRole {
   APPLICANT
 }
 
-enum Gender { MALE FEMALE OTHER }
-enum SemesterName { FIRST SECOND }
-enum EnrollmentStatus { ACTIVE COMPLETED DROPPED DEFERRED }
-enum ResultStatus { DRAFT SUBMITTED APPROVED PUBLISHED }
-enum PaymentStatus { PENDING SUCCESSFUL FAILED REFUNDED }
-enum AdmissionStatus { DRAFT SUBMITTED UNDER_REVIEW ACCEPTED REJECTED }
-enum AttendanceStatus { PRESENT ABSENT LATE EXCUSED }
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+enum SemesterName {
+  FIRST
+  SECOND
+}
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+  DEFERRED
+}
+enum ResultStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  PUBLISHED
+}
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  REFUNDED
+}
+enum AdmissionStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+}
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
 
 model User {
   id String @id @default(cuid())
