@@ -1,7 +1,7 @@
 name: Pre-deployment validation
 on:
   push:
-    branches: ["complete-platform-build"]
+    branches: ["main", "complete-platform-build"]
   pull_request:
     branches: ["main"]
 jobs:
