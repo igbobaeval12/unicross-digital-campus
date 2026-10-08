@@ -93,7 +93,7 @@ model Campus {
 
 model Faculty {
   id String @id @default(cuid())
-  name String @unique
+  name String
   code String @unique
   campusId String?
   campus Campus? @relation(fields: [campusId], references: [id])
