@@ -97,3 +97,25 @@ footer { padding: 28px 6%; display: flex; justify-content: space-between; color:
 .portalCard p { color:#697487; font-size:12px; line-height:1.6; }
 @media (max-width:800px) { .portalStats { grid-template-columns:repeat(2,1fr); } .portalGrid { grid-template-columns:1fr; } .portalWide { grid-row:auto; } }
 @media (max-width:500px) { .authCard { padding:25px; } .portalStats { grid-template-columns:1fr; } .courseRow { grid-template-columns:70px 1fr; } .courseRow em { grid-column:2; text-align:left; } .portalNav .brand span:last-child { display:none; } }
+
+/* Student portal actions */
+.smallAction { padding: 8px 11px; font-size: 11px; }
+.registrationShell { padding: 34px 6% 80px; max-width: 1100px; }
+.registrationHeader { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:22px; }
+.registrationHeader h2 { margin:0 0 7px; font-size:28px; letter-spacing:-.03em; }
+.registrationHeader p { margin:0; color:#697487; font-size:13px; }
+.registrationSummary { display:flex; gap:12px; margin-bottom:12px; }
+.registrationSummary strong,.registrationSummary span { background:white; border:1px solid #e1e7ef; border-radius:9px; padding:10px 13px; font-size:12px; }
+.registrationSummary span { color:#697487; }
+.registrationMessage { margin:12px 0; padding:11px 13px; border-radius:9px; background:#edf7f1; color:#286746; font-size:12px; }
+.registrationList { background:white; border:1px solid #e1e7ef; border-radius:14px; overflow:hidden; }
+.registrationRow { display:grid; grid-template-columns:1fr 150px 110px; gap:18px; align-items:center; padding:17px 20px; border-bottom:1px solid #edf0f4; }
+.registrationRow:last-child { border-bottom:0; }
+.registrationRow b,.registrationRow span { display:block; }
+.registrationRow b { font-size:13px; margin-bottom:5px; }
+.registrationRow span { color:#697487; font-size:12px; }
+.registrationRow small { color:#788496; font-size:11px; }
+.registrationRow button { border:0; padding:10px 12px; border-radius:8px; font-size:11px; font-weight:700; }
+.registeredButton { background:#edf1f5; color:#66758a; cursor:default; }
+.emptyState { padding:35px 20px; text-align:center; color:#697487; font-size:13px; }
+@media (max-width:600px) { .registrationHeader { display:block; } .registrationHeader .secondary { display:inline-block; margin-top:15px; } .registrationRow { grid-template-columns:1fr; gap:9px; } .registrationRow button { width:100%; } }
