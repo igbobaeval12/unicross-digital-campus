@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { requireRoles } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -86,7 +87,7 @@ export default async function ReportsPage() {
   );
 }
 
-function ReportCard({ title, children }: { title: string; children: React.ReactNode }) {
+function ReportCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <article className="portalCard">
       <h3>{title}</h3>
