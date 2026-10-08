@@ -1,1 +1,46 @@
-import {NextResponse} from "next/server";import {getSessionUser} from "@/lib/auth";import {prisma} from "@/lib/prisma";export async function POST(){const u=await getSessionUser();if(!u)return NextResponse.json({error:"Unauthorized."},{status:401});const s=await prisma.student.findUnique({where:{userId:u.id}});if(!s)return NextResponse.json({error:"Student record not found."},{status:404});const f=await prisma.feeStructure.findFirst({where:{programmeId:s.programmeId,session:{isCurrent:true}},orderBy:{createdAt:"desc"}});if(!f)return NextResponse.json({error:"No current fee assessment."},{status:404});const p=await prisma.payment.aggregate({where:{studentId:s.id,feeStructureId:f.id,status:"SUCCESSFUL"},_sum:{amount:true}});const balance=Math.max(Number(f.amount)-Number(p._sum.amount||0),0);if(!balance)return NextResponse.json({message:"No outstanding balance."});const payment=await prisma.payment.create({data:{reference:"DEMO-"+Date.now().toString(36).toUpperCase(),studentId:s.id,userId:u.id,feeStructureId:f.id,amount:balance,status:"SUCCESSFUL",paidAt:new Date()}});return NextResponse.json({ok:true,message:"Prototype payment recorded successfully.",payment})}
+import {NextResponse} from "next/server";
+import {getSessionUser} from "@/lib/auth";
+import {prisma} from "@/lib/prisma";
+
+export async function POST() {
+  const u = await getSessionUser();
+  if (!u) return NextResponse.json({error:"Unauthorized."},{status:401});
+
+  const s = await prisma.student.findUnique({where:{userId:u.id}});
+  if (!s) return NextResponse.json({error:"Student record not found."},{status:404});
+
+  const session = await prisma.academicSession.findFirst({where:{isCurrent:true}});
+  if (!session) return NextResponse.json({error:"No current academic session."},{status:404});
+
+  const f = await prisma.feeStructure.findFirst({
+    where:{programmeId:s.programmeId,sessionId:session.id},
+    orderBy:{createdAt:"desc"},
+  }) ?? await prisma.feeStructure.findFirst({
+    where:{programmeId:null,sessionId:session.id},
+    orderBy:{createdAt:"desc"},
+  });
+
+  if (!f) return NextResponse.json({error:"No current fee assessment."},{status:404});
+
+  const p = await prisma.payment.aggregate({
+    where:{studentId:s.id,feeStructureId:f.id,status:"SUCCESSFUL"},
+    _sum:{amount:true},
+  });
+
+  const balance = Math.max(Number(f.amount)-Number(p._sum.amount||0),0);
+  if (!balance) return NextResponse.json({message:"No outstanding balance."});
+
+  const payment = await prisma.payment.create({
+    data:{
+      reference:"DEMO-"+Date.now().toString(36).toUpperCase(),
+      studentId:s.id,
+      userId:u.id,
+      feeStructureId:f.id,
+      amount:balance,
+      status:"SUCCESSFUL",
+      paidAt:new Date(),
+    },
+  });
+
+  return NextResponse.json({ok:true,message:"Prototype payment recorded successfully.",payment});
+}
