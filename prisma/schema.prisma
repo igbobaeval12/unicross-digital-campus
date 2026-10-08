@@ -190,6 +190,7 @@ model CourseOffering {
   lecturer    Staff?       @relation(fields: [lecturerId], references: [id])
   enrollments Enrollment[]
   results     Result[]
+  attendance  Attendance[]
   @@unique([courseId, semesterId])
 }
 
@@ -336,6 +337,8 @@ model Attendance {
   offeringId String
   date       DateTime         @db.Date
   status     AttendanceStatus @default(PRESENT)
+  semesterId String?
+  semester   Semester?        @relation(fields: [semesterId], references: [id])
   student    Student          @relation(fields: [studentId], references: [id])
   offering   CourseOffering   @relation(fields: [offeringId], references: [id])
   createdAt  DateTime         @default(now())
