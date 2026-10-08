@@ -24,7 +24,7 @@ export default async function ReportsPage() {
 
   const courseFilter = departmentFilter ? { department: departmentFilter } : undefined;
   const studentFilter = departmentFilter ? { department: departmentFilter } : undefined;
-  const staffFilter = departmentFilter ? { OR: [{ department: departmentFilter }, { facultyId: unit?.facultyId ?? undefined }] } : undefined;
+  const staffFilter = departmentFilter ? (unit?.departmentId ? { departmentId: unit.departmentId } : { facultyId: unit?.facultyId ?? "" }) : undefined;
 
   const offeringFilter = courseFilter ? { course: courseFilter } : undefined;
   const resultFilter = offeringFilter ? { offering: offeringFilter } : undefined;
