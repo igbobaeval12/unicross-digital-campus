@@ -10,8 +10,12 @@ export async function getSessionUser() {
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
     if (!payload.sub) return null;
-    return prisma.user.findUnique({ where: { id: String(payload.sub) } });
-  } catch { return null; }
+    return prisma.user.findFirst({
+      where: { id: String(payload.sub), isActive: true },
+    });
+  } catch {
+    return null;
+  }
 }
 
 export async function requireUser() {
