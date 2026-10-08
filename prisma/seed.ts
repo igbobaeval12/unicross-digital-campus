@@ -62,20 +62,17 @@ async function main() {
     ["CSC 309", "Computer Networks", 2],
   ] as const;
 
+  // Keep the demo student unregistered so course registration is a real user action.
+  // Course offerings are created here, but no enrollment is seeded.
   for (const [code, title, unit] of courseData) {
     const course = await prisma.course.upsert({
       where: { code }, update: { title, unit, level: 300, departmentId: department.id },
       create: { code, title, unit, level: 300, departmentId: department.id },
     });
-    const offering = await prisma.courseOffering.upsert({
+    await prisma.courseOffering.upsert({
       where: { courseId_semesterId: { courseId: course.id, semesterId: semester.id } },
       update: { sessionId: session.id },
       create: { courseId: course.id, sessionId: session.id, semesterId: semester.id },
-    });
-    await prisma.enrollment.upsert({
-      where: { studentId_offeringId: { studentId: student.id, offeringId: offering.id } },
-      update: { semesterId: semester.id },
-      create: { studentId: student.id, offeringId: offering.id, semesterId: semester.id },
     });
   }
 
