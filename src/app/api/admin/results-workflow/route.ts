@@ -4,23 +4,35 @@ import { prisma } from "@/lib/prisma";
 
 const roles = ["UNIVERSITY_ADMIN", "SUPER_ADMIN", "FACULTY_ADMIN", "DEPARTMENT_ADMIN"];
 
-async function getScope(user: { id: string; role: string }) {
-  if (user.role === "UNIVERSITY_ADMIN" || user.role === "SUPER_ADMIN") return {};
+async function getUnitScope(user: { id: string; role: string }) {
+  if (user.role === "UNIVERSITY_ADMIN" || user.role === "SUPER_ADMIN") return { unrestricted: true, facultyId: null, departmentId: null };
   const staff = await prisma.staff.findUnique({ where: { userId: user.id }, select: { facultyId: true, departmentId: true } });
   if (!staff) return null;
-  if (user.role === "DEPARTMENT_ADMIN") return staff.departmentId ? { student: { departmentId: staff.departmentId } } : null;
-  if (user.role === "FACULTY_ADMIN") return staff.facultyId ? { student: { department: { facultyId: staff.facultyId } } } : null;
-  return null;
+  if (user.role === "DEPARTMENT_ADMIN" && !staff.departmentId) return null;
+  if (user.role === "FACULTY_ADMIN" && !staff.facultyId) return null;
+  return { unrestricted: false, facultyId: staff.facultyId, departmentId: staff.departmentId };
+}
+
+function inScope(scope: NonNullable<Awaited<ReturnType<typeof getUnitScope>>>, departmentId: string, facultyId: string) {
+  if (scope.unrestricted) return true;
+  if (scope.departmentId) return scope.departmentId === departmentId;
+  return scope.facultyId === facultyId;
 }
 
 export async function GET() {
   const user = await getSessionUser();
   if (!user || !roles.includes(user.role)) return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  const scope = await getScope(user);
-  if (scope === null) return NextResponse.json({ error: "Administrative unit assignment is missing." }, { status: 403 });
+  const scope = await getUnitScope(user);
+  if (!scope) return NextResponse.json({ error: "Administrative unit assignment is missing." }, { status: 403 });
+
+  const where = scope.unrestricted
+    ? {}
+    : scope.departmentId
+      ? { student: { departmentId: scope.departmentId } }
+      : { student: { department: { facultyId: scope.facultyId! } } };
 
   return NextResponse.json(await prisma.result.findMany({
-    where: scope,
+    where,
     orderBy: { id: "desc" },
     take: 200,
     include: {
@@ -48,12 +60,9 @@ export async function POST(req: Request) {
   });
   if (!result) return NextResponse.json({ error: "Result not found." }, { status: 404 });
 
-  const scope = await getScope(user);
-  if (scope === null) return NextResponse.json({ error: "Administrative unit assignment is missing." }, { status: 403 });
-  if (user.role === "DEPARTMENT_ADMIN" && result.student.departmentId !== (scope.student as { departmentId: string }).departmentId) {
-    return NextResponse.json({ error: "You are not authorized to manage this result." }, { status: 403 });
-  }
-  if (user.role === "FACULTY_ADMIN" && result.student.department.facultyId !== (scope.student as { department: { facultyId: string } }).department.facultyId) {
+  const scope = await getUnitScope(user);
+  if (!scope) return NextResponse.json({ error: "Administrative unit assignment is missing." }, { status: 403 });
+  if (!inScope(scope, result.student.departmentId, result.student.department.facultyId)) {
     return NextResponse.json({ error: "You are not authorized to manage this result." }, { status: 403 });
   }
 
@@ -63,6 +72,14 @@ export async function POST(req: Request) {
 
   const status = action === "approve" ? "APPROVED" : action === "publish" ? "PUBLISHED" : "DRAFT";
   const updated = await prisma.result.update({ where: { id }, data: { status } });
-  await prisma.auditLog.create({ data: { userId: user.id, action: "RESULT_" + action.toUpperCase(), entity: "Result", entityId: id, metadata: { from: result.status, to: status } } });
+  await prisma.auditLog.create({
+    data: {
+      userId: user.id,
+      action: "RESULT_" + action.toUpperCase(),
+      entity: "Result",
+      entityId: id,
+      metadata: { from: result.status, to: status },
+    },
+  });
   return NextResponse.json({ ok: true, result: updated });
 }
