@@ -119,3 +119,31 @@ footer { padding: 28px 6%; display: flex; justify-content: space-between; color:
 .registeredButton { background:#edf1f5; color:#66758a; cursor:default; }
 .emptyState { padding:35px 20px; text-align:center; color:#697487; font-size:13px; }
 @media (max-width:600px) { .registrationHeader { display:block; } .registrationHeader .secondary { display:inline-block; margin-top:15px; } .registrationRow { grid-template-columns:1fr; gap:9px; } .registrationRow button { width:100%; } }
+
+/* Results & GPA */
+.resultsShell { padding:34px 6% 80px; max-width:1200px; }
+.resultsHeader { display:flex; justify-content:space-between; align-items:end; gap:24px; margin-bottom:22px; }
+.resultsHeader h2 { margin:0 0 7px; font-size:28px; letter-spacing:-.03em; }
+.resultsHeader p { margin:0; color:#697487; font-size:13px; }
+.resultsStats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
+.resultsStats article { background:white; border:1px solid #e1e7ef; border-radius:12px; padding:17px; }
+.resultsStats small,.resultsStats span { display:block; color:#7b8493; font-size:10px; }
+.resultsStats strong { display:block; margin:8px 0 4px; font-size:25px; letter-spacing:-.04em; }
+.resultsTable { background:white; border:1px solid #e1e7ef; border-radius:14px; overflow:hidden; }
+.resultsTableHead,.resultsTableRow { display:grid; grid-template-columns:minmax(220px,1.7fr) 65px 70px 70px 70px 70px 55px; gap:12px; align-items:center; padding:14px 18px; }
+.resultsTableHead { background:#f8fafc; color:#7b8493; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.05em; }
+.resultsTableRow { border-top:1px solid #edf0f4; font-size:12px; }
+.resultsTableRow > span,.resultsTableRow > strong,.resultsTableRow > em { text-align:center; }
+.resultsTableRow div b,.resultsTableRow div span { display:block; }
+.resultsTableRow div span { color:#697487; font-size:11px; margin-top:4px; }
+.grade { font-style:normal; font-weight:800; padding:6px 8px; border-radius:7px; background:#edf1f5; color:#455268; }
+.grade-A { background:#eaf6ef; color:#28704a; }
+.grade-B { background:#edf4fb; color:#32649b; }
+.grade-C { background:#f8f3e8; color:#806b2e; }
+.grade-D,.grade-E { background:#fff5e8; color:#8a6125; }
+.grade-F { background:#fff0f0; color:#a13d3d; }
+.resultsNote { margin-top:14px; padding:14px 16px; border:1px solid #e1e7ef; border-radius:10px; background:#fff; font-size:11px; color:#697487; }
+.resultsNote b { color:#344256; margin-right:10px; }
+.prototypeNotice { margin-top:12px; color:#8993a2; font-size:10px; line-height:1.5; }
+@media (max-width:850px) { .resultsStats { grid-template-columns:repeat(2,1fr); } .resultsTable { overflow-x:auto; } .resultsTableHead,.resultsTableRow { min-width:720px; } }
+@media (max-width:600px) { .resultsHeader { display:block; } .resultsHeader .secondary { display:inline-block; margin-top:15px; } .resultsStats { grid-template-columns:1fr 1fr; } .resultsStats strong { font-size:22px; } .resultsNote b { display:block; margin:0 0 6px; } }
