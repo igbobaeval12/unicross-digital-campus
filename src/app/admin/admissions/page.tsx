@@ -3,12 +3,14 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { requireRoles } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import AdmissionActions from "./admission-actions";
 
 export default async function Admissions() {
   await requireRoles(["UNIVERSITY_ADMIN", "SUPER_ADMIN", "FACULTY_ADMIN", "DEPARTMENT_ADMIN"]);
   const applications = await prisma.admissionApplication.findMany({
     include: { applicant: true, programme: true, session: true },
     orderBy: { createdAt: "desc" },
+    take: 200,
   });
 
   return (
@@ -18,7 +20,7 @@ export default async function Admissions() {
       </nav>
       <section className="registrationShell">
         <div className="registrationHeader">
-          <div><div className="eyebrow">ADMISSIONS MANAGEMENT</div><h2>Applications</h2></div>
+          <div><div className="eyebrow">ADMISSIONS MANAGEMENT</div><h2>Applications</h2><p>Review submitted applications and update workflow status.</p></div>
           <Link href="/admin" className="secondary">Back</Link>
         </div>
         <div className="catalogList">
@@ -27,9 +29,9 @@ export default async function Admissions() {
               <b>{application.applicationNo}</b>
               <div>
                 <strong>{application.applicant.firstName} {application.applicant.lastName}</strong>
-                <span>{application.programme.name} · {application.session.name}</span>
+                <span>{application.applicant.email} · {application.programme.name} · {application.session.name}</span>
               </div>
-              <em>{application.status}</em>
+              <AdmissionActions id={application.id} status={application.status} />
             </div>
           ))}
           {!applications.length && <div className="emptyState">No applications yet.</div>}
