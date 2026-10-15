@@ -10,7 +10,7 @@ export async function getSessionUser() {
   try {
     const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
     if (!payload.sub) return null;
-    return prisma.user.findFirst({
+    return await prisma.user.findFirst({
       where: { id: String(payload.sub), isActive: true },
     });
   } catch {
