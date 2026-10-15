@@ -65,6 +65,17 @@ These are initial design hypotheses. They should be validated through feedback f
 - [ ] No real student or financial information in portfolio screenshots
 - [ ] Demo data clearly marked as illustrative
 
+## Implementation progress
+
+The first implementation pass focuses on consistent, role-specific dashboard hierarchy:
+
+- **Student workspace:** refreshed KPI cards, course rows, quick-service links, and small-screen spacing while preserving the existing authenticated server-rendered data flow.
+- **Lecturer workspace:** added a teaching overview derived from assigned course offerings, course cards, student counts, course units, and a clear empty state when no courses are assigned.
+- **Administration workspace:** improved the hierarchy of operational summary cards and management shortcuts for narrower screens.
+- **Shared visual system:** added responsive styling for dashboard navigation, cards, hover/focus-friendly affordances, and role-specific sections.
+
+These are implementation changes, not verified usability outcomes. Automated build and browser/device checks have not yet been confirmed; do not describe the redesign as tested or deployed until those checks are completed.
+
 ## Validation plan
 
 1. Capture the current experience and list usability issues before changing it.
