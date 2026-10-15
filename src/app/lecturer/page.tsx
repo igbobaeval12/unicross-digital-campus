@@ -6,10 +6,46 @@ import { prisma } from "@/lib/prisma";
 
 export default async function Lecturer() {
   const u = await requireRoles(["LECTURER"]);
-  const s = await prisma.staff.findUnique({
+  const staffInclude = { department: true, offerings: { include: { course: true, enrollments: { where: { status: "ACTIVE" as const } } } } };
+
+  let s = await prisma.staff.findUnique({
     where: { userId: u.id },
-    include: { department: true, offerings: { include: { course: true, enrollments: { where: { status: "ACTIVE" } } } } },
+    include: staffInclude,
   });
+
+  // Repair the seeded demo lecturer profile on the same database used by the
+  // live request. This also handles deployments where the pre-deploy seed and
+  // runtime DATABASE_URL were temporarily out of sync.
+  if (!s && u.email.toLowerCase() === "lecturer@demo.unicross.edu.ng") {
+    const department = await prisma.department.findUnique({
+      where: { code: "CSC" },
+      include: { faculty: true },
+    });
+
+    if (department) {
+      await prisma.staff.upsert({
+        where: { userId: u.id },
+        update: {
+          staffNumber: "UNICROSS/STAFF/DEMO-001",
+          facultyId: department.facultyId,
+          departmentId: department.id,
+          title: "Lecturer",
+        },
+        create: {
+          userId: u.id,
+          staffNumber: "UNICROSS/STAFF/DEMO-001",
+          facultyId: department.facultyId,
+          departmentId: department.id,
+          title: "Lecturer",
+        },
+      });
+
+      s = await prisma.staff.findUnique({
+        where: { userId: u.id },
+        include: staffInclude,
+      });
+    }
+  }
 
   if (!s) {
     return (
