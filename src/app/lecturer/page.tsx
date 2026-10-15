@@ -52,7 +52,7 @@ export default async function Lecturer() {
       <main className="portalPage">
         <nav className="portalNav">
           <Link href="/" className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></Link>
-          <div className="portalNavRight"><span className="roleBadge">LECTURER</span><Link href="/api/auth/logout" className="portalLogout">Sign out</Link></div>
+          <div className="portalNavRight"><span className="roleBadge">LECTURER</span><a href="/api/auth/logout" className="portalLogout">Sign out</a></div>
         </nav>
         <section className="portalHero"><div className="eyebrow">LECTURER WORKSPACE</div><h1>Staff profile not configured</h1><p>Your account is signed in, but it is not linked to a lecturer profile yet. Please contact a university administrator.</p></section>
       </main>
@@ -66,7 +66,7 @@ export default async function Lecturer() {
     <main className="portalPage lecturerPage">
       <nav className="portalNav">
         <Link href="/" className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></Link>
-        <div className="portalNavRight"><span className="roleBadge">LECTURER</span><Link href="/api/auth/logout" className="portalLogout">Sign out</Link></div>
+        <div className="portalNavRight"><span className="roleBadge">LECTURER</span><a href="/api/auth/logout" className="portalLogout">Sign out</a></div>
       </nav>
 
       <section className="portalHero">
