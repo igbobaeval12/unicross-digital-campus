@@ -47,7 +47,7 @@ export default function Attendance() {
         for (const offering of data as Offering[]) {
           for (const record of offering.attendance || []) {
             if (record.date.slice(0, 10) === date) {
-              initial[record.studentId] = record.status;
+              initial[`${offering.id}:${record.studentId}`] = record.status;
             }
           }
         }
@@ -64,6 +64,7 @@ export default function Attendance() {
   }, [date]);
 
   async function mark(offeringId: string, studentId: string) {
+    const statusKey = `${offeringId}:${studentId}`;
     try {
       const response = await fetch("/api/attendance", {
         method: "POST",
@@ -74,12 +75,12 @@ export default function Attendance() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setStatus((current) => ({ ...current, [studentId]: data.error || "Failed to mark attendance" }));
+        setStatus((current) => ({ ...current, [statusKey]: data.error || "Failed to mark attendance" }));
         return;
       }
-      setStatus((current) => ({ ...current, [studentId]: "PRESENT" }));
+      setStatus((current) => ({ ...current, [statusKey]: "PRESENT" }));
     } catch {
-      setStatus((current) => ({ ...current, [studentId]: "Could not connect; retry" }));
+      setStatus((current) => ({ ...current, [statusKey]: "Could not connect; retry" }));
     }
   }
 
@@ -107,7 +108,7 @@ export default function Attendance() {
                 <strong>{student.matricNumber}</strong>
                 <span>{student.user.firstName} {student.user.lastName}</span>
                 <button className="secondary" onClick={() => void mark(offering.id, student.id)}>
-                  {status[student.id] === "PRESENT" ? "Present ✓" : status[student.id] || "Mark present"}
+                  {status[`${offering.id}:${student.id}`] === "PRESENT" ? "Present ✓" : status[`${offering.id}:${student.id}`] || "Mark present"}
                 </button>
               </div>
             ))}
