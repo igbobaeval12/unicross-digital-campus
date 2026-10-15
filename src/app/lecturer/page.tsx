@@ -8,7 +8,7 @@ export default async function Lecturer() {
   const u = await requireRoles(["LECTURER"]);
   const s = await prisma.staff.findUnique({
     where: { userId: u.id },
-    include: { department: true, offerings: { include: { course: true, enrollments: true } } },
+    include: { department: true, offerings: { include: { course: true, enrollments: { where: { status: "ACTIVE" } } } } },
   });
 
   if (!s) return null;
