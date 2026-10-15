@@ -87,7 +87,9 @@ export default function LoginPage() {
         <div className="demoBox">
           <b>Prototype demo account</b>
           <span>Student: student@demo.unicross.edu.ng</span>
-          <span>Password: Demo@12345</span>
+          <span>Lecturer: lecturer@demo.unicross.edu.ng</span>
+          <span>Administrator: admin@demo.unicross.edu.ng</span>
+          <span>Password for all demo accounts: Demo@12345</span>
         </div>
 
         <p className="authNote">
