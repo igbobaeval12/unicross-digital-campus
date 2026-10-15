@@ -1,3 +1,82 @@
 export const dynamic = "force-dynamic";
 
-import Link from"next/link";import{requireRoles}from"@/lib/auth";import{prisma}from"@/lib/prisma";export default async function Lecturer(){const u=await requireRoles(["LECTURER"]);const s=await prisma.staff.findUnique({where:{userId:u.id},include:{department:true,offerings:{include:{course:true,enrollments:true}}}});if(!s)return null;return <main className="portalPage"><nav className="portalNav"><Link href="/" className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></Link><div className="portalNavRight"><span className="roleBadge">LECTURER</span><Link href="/api/auth/logout" className="portalLogout">Sign out</Link></div></nav><section className="portalHero"><div className="eyebrow">LECTURER WORKSPACE</div><h1>Welcome, {u.firstName}.</h1><p>{s.title||"Academic staff"} · {s.department?.name||"Department"}</p></section><section className="registrationShell"><div className="materialsGrid">{s.offerings.map(o=><article className="portalCard" key={o.id}><div className="portalCardHead"><h3>{o.course.code}</h3><span>{o.enrollments.length} students</span></div><p>{o.course.title} · {o.course.unit} units</p><Link className="secondary smallAction" href={"/lecturer/course/"+o.id}>Open course</Link></article>)}</div><div className="quickLinks"><Link href="/attendance">Attendance</Link><Link href="/profile">My profile</Link><Link href="/materials">Course materials</Link><Link href="/announcements">Announcements</Link></div></section></main>}
+import Link from "next/link";
+import { requireRoles } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+export default async function Lecturer() {
+  const u = await requireRoles(["LECTURER"]);
+  const s = await prisma.staff.findUnique({
+    where: { userId: u.id },
+    include: { department: true, offerings: { include: { course: true, enrollments: { where: { status: "ACTIVE" } } } } },
+  });
+
+  if (!s) {
+    return (
+      <main className="portalPage">
+        <nav className="portalNav">
+          <Link href="/" className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></Link>
+          <div className="portalNavRight"><span className="roleBadge">LECTURER</span><Link href="/api/auth/logout" className="portalLogout">Sign out</Link></div>
+        </nav>
+        <section className="portalHero"><div className="eyebrow">LECTURER WORKSPACE</div><h1>Staff profile not configured</h1><p>Your account is signed in, but it is not linked to a lecturer profile yet. Please contact a university administrator.</p></section>
+      </main>
+    );
+  }
+
+  const studentCount = s.offerings.reduce((total, offering) => total + offering.enrollments.length, 0);
+  const courseUnits = s.offerings.reduce((total, offering) => total + offering.course.unit, 0);
+
+  return (
+    <main className="portalPage lecturerPage">
+      <nav className="portalNav">
+        <Link href="/" className="brand"><span className="brandMark">U</span><span>UNICROSS Digital Campus</span></Link>
+        <div className="portalNavRight"><span className="roleBadge">LECTURER</span><Link href="/api/auth/logout" className="portalLogout">Sign out</Link></div>
+      </nav>
+
+      <section className="portalHero">
+        <div className="eyebrow">LECTURER WORKSPACE</div>
+        <h1>Welcome, {u.firstName}.</h1>
+        <p>{s.title || "Academic staff"} · {s.department?.name || "Department"}</p>
+      </section>
+
+      <section className="lecturerOverview" aria-label="Teaching overview">
+        <article><span>Assigned courses</span><strong>{s.offerings.length}</strong><small>Courses assigned to you</small></article>
+        <article><span>Enrolled students</span><strong>{studentCount}</strong><small>Across your course offerings</small></article>
+        <article><span>Teaching units</span><strong>{courseUnits}</strong><small>Total units assigned</small></article>
+      </section>
+
+      <section className="registrationShell lecturerShell">
+        <div className="lecturerSectionHeading">
+          <div><div className="eyebrow">TEACHING</div><h2>Your courses</h2><p>Open a course to manage its academic activities.</p></div>
+          <Link className="secondary smallAction" href="/attendance">Take attendance</Link>
+        </div>
+
+        {s.offerings.length ? (
+          <div className="lecturerCourseGrid">
+            {s.offerings.map((o) => (
+              <article className="portalCard lecturerCourseCard" key={o.id}>
+                <div className="lecturerCourseTop"><span className="lecturerCourseIcon">▤</span><span className="lecturerEnrollment">{o.enrollments.length} students</span></div>
+                <div className="lecturerCourseCode">{o.course.code} <span>· {o.course.unit} units</span></div>
+                <h3>{o.course.title}</h3>
+                <p>Course workspace for attendance, learning materials and class activities.</p>
+                <Link className="lecturerOpenCourse" href={"/lecturer/course/" + o.id}>Open course <span aria-hidden="true">→</span></Link>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="portalCard lecturerEmpty"><h3>No courses assigned yet</h3><p>Your assigned course offerings will appear here when they are available.</p></div>
+        )}
+
+        <article className="portalCard lecturerServices">
+          <div><div className="eyebrow">SHORTCUTS</div><h3>Staff services</h3></div>
+          <div className="quickLinks">
+            <Link href="/attendance">Attendance</Link>
+            <Link href="/profile">My profile</Link>
+            <Link href="/materials">Course materials</Link>
+            <Link href="/announcements">Announcements</Link>
+          </div>
+        </article>
+      </section>
+    </main>
+  );
+}
