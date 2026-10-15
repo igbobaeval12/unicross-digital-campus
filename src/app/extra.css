@@ -42,3 +42,37 @@
 .portalCard .emptyState { border:1px dashed #dbe4ef; border-radius:10px; background:#fafcff; }
 @media(max-width:800px) { .portalHero { padding:42px 6% 34px; } .portalStats { gap:10px; } .portalStats article { padding:16px; } .portalGrid { padding-top:16px; } .portalCard { padding:19px; } }
 @media(max-width:520px) { .portalNav { height:66px; padding:0 5%; } .portalNavRight { gap:9px; } .roleBadge { display:none; } .portalLogout { padding:9px 10px; } .portalHero { padding:35px 5% 30px; } .portalStats { padding:0 5%; } .portalGrid { padding:14px 5% 0; } .portalGrid:last-of-type { padding-bottom:40px; } .quickLinks { grid-template-columns:1fr 1fr; } .quickLinks a { padding:12px 10px; font-size:11px; } .portalCardHead { align-items:flex-start; flex-wrap:wrap; } .courseRow { grid-template-columns:72px minmax(0,1fr); gap:8px 12px; } .courseRow em { grid-column:2; text-align:left; } }
+
+
+/* Lecturer workspace — course-first enterprise layout */
+.lecturerOverview { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; padding:0 6%; background:#f4f7fb; }
+.lecturerOverview article { display:flex; flex-direction:column; gap:7px; padding:20px 22px; border:1px solid #e1e8f0; border-radius:14px; background:#fff; box-shadow:0 5px 18px rgba(29,55,86,.035); }
+.lecturerOverview article span { color:#73849a; font-size:11px; font-weight:700; }
+.lecturerOverview article strong { color:#183b61; font-size:30px; line-height:1.1; letter-spacing:-.05em; }
+.lecturerOverview article small { color:#8996a7; font-size:10px; }
+.lecturerShell { max-width:1440px; margin:0 auto; }
+.lecturerSectionHeading { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:20px; }
+.lecturerSectionHeading .eyebrow { margin-bottom:8px; }
+.lecturerSectionHeading h2 { margin:0 0 7px; color:#1a3049; font-size:28px; letter-spacing:-.04em; }
+.lecturerSectionHeading p { margin:0; color:#758398; font-size:12px; }
+.lecturerCourseGrid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:15px; margin-bottom:22px; }
+.lecturerCourseCard { display:flex; flex-direction:column; min-height:245px; transition:transform .2s,border-color .2s,box-shadow .2s; }
+.lecturerCourseCard:hover { transform:translateY(-3px); border-color:#c7d7e8; box-shadow:0 12px 26px rgba(29,55,86,.075); }
+.lecturerCourseTop { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.lecturerCourseIcon { display:grid; place-items:center; width:38px; height:38px; border-radius:11px; background:#edf4fb; color:#315f91; font-size:19px; }
+.lecturerEnrollment { padding:6px 9px; border-radius:999px; background:#edf7f1; color:#2b7450; font-size:10px; font-weight:800; white-space:nowrap; }
+.lecturerCourseCode { color:#315f91; font-size:11px; font-weight:800; letter-spacing:.035em; }
+.lecturerCourseCode span { color:#8a97a8; font-weight:600; letter-spacing:0; }
+.lecturerCourseCard h3 { margin:9px 0 6px; line-height:1.4; }
+.lecturerCourseCard p { margin:0 0 18px; color:#758398; font-size:11px; line-height:1.6; }
+.lecturerOpenCourse { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:auto; padding-top:13px; border-top:1px solid #edf1f6; color:#2e5e92; font-size:11px; font-weight:800; }
+.lecturerOpenCourse span { font-size:17px; transition:transform .2s; }
+.lecturerOpenCourse:hover span { transform:translateX(3px); }
+.lecturerEmpty { margin-bottom:22px; padding:30px; border-style:dashed; background:#fbfdff; }
+.lecturerEmpty h3 { margin-bottom:8px; }
+.lecturerServices { display:grid; grid-template-columns:180px minmax(0,1fr); gap:20px; align-items:center; }
+.lecturerServices .eyebrow { margin-bottom:8px; }
+.lecturerServices h3 { margin:0; }
+.lecturerServices .quickLinks { grid-template-columns:repeat(4,minmax(0,1fr)); }
+@media(max-width:900px) { .lecturerCourseGrid { grid-template-columns:repeat(2,minmax(0,1fr)); } .lecturerServices { grid-template-columns:1fr; } .lecturerServices .quickLinks { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .lecturerOverview { grid-template-columns:1fr; padding:0 5%; gap:9px; } .lecturerOverview article { padding:15px 17px; } .lecturerOverview article strong { font-size:26px; } .lecturerShell { padding:25px 5% 45px; } .lecturerSectionHeading { align-items:flex-start; flex-direction:column; } .lecturerCourseGrid { grid-template-columns:1fr; } .lecturerCourseCard { min-height:220px; } .lecturerServices .quickLinks { grid-template-columns:1fr 1fr; } }
