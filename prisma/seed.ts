@@ -11,7 +11,7 @@ async function main() {
     update: { passwordHash, firstName: "Demo", lastName: "Student", role: UserRole.STUDENT, isActive: true },
     create: { email: "student@demo.unicross.edu.ng", firstName: "Demo", lastName: "Student", role: UserRole.STUDENT, passwordHash },
   });
-  await prisma.user.upsert({
+  const lecturerUser = await prisma.user.upsert({
     where: { email: "lecturer@demo.unicross.edu.ng" },
     update: { passwordHash, firstName: "Demo", lastName: "Lecturer", role: UserRole.LECTURER, isActive: true },
     create: { email: "lecturer@demo.unicross.edu.ng", firstName: "Demo", lastName: "Lecturer", role: UserRole.LECTURER, passwordHash },
@@ -75,6 +75,16 @@ async function main() {
       create: { courseId: course.id, sessionId: session.id, semesterId: semester.id },
     });
   }
+
+  const lecturer = await prisma.staff.upsert({
+    where: { userId: lecturerUser.id },
+    update: { staffNumber: "UNICROSS/STAFF/DEMO-001", facultyId: faculty.id, departmentId: department.id, title: "Lecturer" },
+    create: { userId: lecturerUser.id, staffNumber: "UNICROSS/STAFF/DEMO-001", facultyId: faculty.id, departmentId: department.id, title: "Lecturer" },
+  });
+  await prisma.courseOffering.updateMany({
+    where: { course: { departmentId: department.id } },
+    data: { lecturerId: lecturer.id },
+  });
 
   const grades = [
     ["CSC 301", 24, 62, 86, "A", 4],
