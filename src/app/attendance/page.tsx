@@ -89,7 +89,7 @@ export default function Attendance() {
         <Link href="/lecturer" className="brand">
           <span className="brandMark">U</span><span>Attendance</span>
         </Link>
-        <Link href="/api/auth/logout" className="portalLogout">Sign out</Link>
+        <a href="/api/auth/logout" className="portalLogout">Sign out</a>
       </nav>
       <section className="portalHero">
         <div className="eyebrow">LECTURER WORKSPACE</div>
