@@ -76,3 +76,25 @@
 .lecturerServices .quickLinks { grid-template-columns:repeat(4,minmax(0,1fr)); }
 @media(max-width:900px) { .lecturerCourseGrid { grid-template-columns:repeat(2,minmax(0,1fr)); } .lecturerServices { grid-template-columns:1fr; } .lecturerServices .quickLinks { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:600px) { .lecturerOverview { grid-template-columns:1fr; padding:0 5%; gap:9px; } .lecturerOverview article { padding:15px 17px; } .lecturerOverview article strong { font-size:26px; } .lecturerShell { padding:25px 5% 45px; } .lecturerSectionHeading { align-items:flex-start; flex-direction:column; } .lecturerCourseGrid { grid-template-columns:1fr; } .lecturerCourseCard { min-height:220px; } .lecturerServices .quickLinks { grid-template-columns:1fr 1fr; } }
+
+
+/* Administration workspace — information hierarchy and responsive management grid */
+.portalPage:has(.adminStats) .portalHero { padding-bottom:50px; }
+.adminStats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px; padding:0 6%; margin:0; }
+.adminStats article { position:relative; min-width:0; padding:19px 20px; border:1px solid #e1e8f0; border-radius:13px; background:#fff; box-shadow:0 5px 18px rgba(29,55,86,.035); overflow:hidden; }
+.adminStats article:before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:#7298c1; }
+.adminStats small { display:block; margin-bottom:9px; color:#78889b; font-size:10px; font-weight:700; letter-spacing:.025em; }
+.adminStats strong { display:block; color:#183b61; font-size:clamp(23px,2.3vw,30px); line-height:1.1; letter-spacing:-.045em; overflow-wrap:anywhere; }
+.portalPage:has(.adminStats) .registrationShell { max-width:1440px; margin:0 auto; padding-top:26px; }
+.adminGrid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.adminGrid > .portalCard { min-width:0; padding:24px; }
+.adminGrid > .portalCard h3 { display:flex; align-items:center; gap:10px; margin-bottom:19px; }
+.adminGrid > .portalCard h3:before { content:""; display:block; width:7px; height:22px; border-radius:4px; background:#7298c1; }
+.adminGrid .quickLinks { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.adminGrid .quickLinks a { min-height:46px; }
+.adminGrid > .portalCard:nth-child(2) h3:before { background:#5d9b82; }
+.adminGrid > .portalCard:nth-child(3) h3:before { background:#c49b53; }
+.adminGrid > .portalCard:nth-child(4) h3:before { background:#8b82c4; }
+.adminGrid > .portalCard:nth-child(5) h3:before { background:#c27c80; }
+@media(max-width:800px) { .adminStats { grid-template-columns:repeat(3,minmax(0,1fr)); padding:0 5%; } .portalPage:has(.adminStats) .registrationShell { padding:22px 5% 45px; } .adminGrid { grid-template-columns:1fr; } }
+@media(max-width:520px) { .adminStats { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .adminStats article { padding:15px; } .adminStats strong { font-size:24px; } .adminGrid .quickLinks { grid-template-columns:1fr; } }
