@@ -1,3 +1,4 @@
+// Keep logout actions as plain anchors: Next.js Link prefetch can call the GET logout endpoint.
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
