@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const VALID_STATUSES = ["PRESENT", "ABSENT", "LATE", "EXCUSED"] as const;
 
 export async function GET() {
